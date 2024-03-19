@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Cinemachine;
 using Photon.Pun;
 using SL;
@@ -22,27 +23,37 @@ public class Player : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
-        ServiceLocator.Instance.GetService<IGameManager>().AddPlayer(this);
         cinemachineComponentBase.gameObject.SetActive(photonView.IsMine);
         
         if (photonView.IsMine)
         {
             inputCustom.OnFire += OnFire;
             nickName = ServiceLocator.Instance.GetService<ISaveData>().GetNickName();
+            ServiceLocator.Instance.GetService<ISaveData>().SaveNickName(nickName, life, photonView);
+            ServiceLocator.Instance.GetService<IDebug>().Log($"Data Saved {nickName} {life} {photonView.IsMine}");
+            photonView.Owner.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+            {
+                {"Ready", true}
+            });
+            ServiceLocator.Instance.GetService<IGameManager>().AddPlayer(this);
         }
         else
         {
-            nickName = photonView.Owner.CustomProperties["NickName"].ToString();
+            StartCoroutine(ReadData());
         }
-        
-        ServiceLocator.Instance.GetService<ISaveData>().SaveNickName(nickName, photonView);
-        ServiceLocator.Instance.GetService<ISaveData>().SaveLife(life, photonView);
-        ServiceLocator.Instance.GetService<IDebug>().Log($"Data Saved {nickName} {life} {photonView.IsMine}");
+    }
+
+    private IEnumerator ReadData()
+    {
+        yield return new WaitForSeconds(0.5f);
+        nickName = photonView.Owner.CustomProperties["NickName"].ToString();
+        life = (float) photonView.Owner.CustomProperties["Life"];
+        ServiceLocator.Instance.GetService<IDebug>().Log($"Data Read {nickName} {life} {photonView.IsMine}");
     }
 
     private void OnFire()
     {
-        ServiceLocator.Instance.GetService<IDebug>().Log($"OnFire {photonView.IsMine}");
+        ServiceLocator.Instance.GetService<IDebug>().Log($"{nickName} OnFire {photonView.IsMine}");
         if (photonView.IsMine)
         {
             if (Physics.Raycast(pointShoot.transform.position, pointShoot.transform.forward, out var hit, 100f))
@@ -50,9 +61,10 @@ public class Player : MonoBehaviourPunCallbacks
                 ServiceLocator.Instance.GetService<IDebug>().Log($"Hit {hit.transform.name}");
                 if (hit.transform.CompareTag("Player"))
                 {
-                    ServiceLocator.Instance.GetService<IDebug>().Log($"Player {hit.transform.name}");
+                    var targetNick = hit.transform.GetComponent<Player>().nickName;
+                    ServiceLocator.Instance.GetService<IDebug>().Log($"Player {hit.transform.name} and name of target {targetNick} and me is {nickName}");
                     var target = hit.transform.GetComponent<PhotonView>();
-                    photonView.RPC(nameof(TakeDamage), target.Owner, damage, target.Owner.CustomProperties["NickName"]);
+                    target.RPC(nameof(TakeDamage), RpcTarget.All, damage, targetNick);
                 }
             }
         }
@@ -62,7 +74,8 @@ public class Player : MonoBehaviourPunCallbacks
     private void OnDestroy()
     {
         if (!photonView.IsMine) return;
-        ServiceLocator.Instance.GetService<IGameManager>().RemovePlayer(this);
+        //Disconnect the player
+        PhotonNetwork.Disconnect();
     }
 
     // Update is called once per frame
@@ -82,27 +95,47 @@ public class Player : MonoBehaviourPunCallbacks
     [PunRPC]
     public void TakeDamage(float damage, string nickName)
     {
-        ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} = {nickName} take damage {damage} photonView.IsMine {photonView.IsMine}");
-        life -= damage;
-        OnPlayerTakeDamage?.Invoke();
-        if (life <= 0)
+        var nickl = this.nickName;
+        ServiceLocator.Instance.GetService<IDebug>().Log($"{nickName} take damage {damage} and me is {nickl}");
+        if (nickl == nickName)
         {
-            ServiceLocator.Instance.GetService<IDebug>().Log($"{nickName} is dead");
+            ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} = {nickName} take damage {damage} photonView.IsMine {photonView.IsMine}");
+            life -= damage;
+            OnPlayerTakeDamage?.Invoke();
+            ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} take damage {damage} photonView.IsMine {photonView.IsMine}");
+            if (life <= 0)
+            {
+                ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} is dead");
+                photonView.RPC(nameof(Dead), RpcTarget.All);
+            }
+            photonView.Owner.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+            {
+                {"Life", life}
+            });
         }
-        ServiceLocator.Instance.GetService<ISaveData>().SaveLife(life, photonView);
         ServiceLocator.Instance.GetService<IPhotonRPC>().UpdateTable();
+    }
+    
+    [PunRPC]
+    public void Dead()
+    {
+        ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} Dead");
+        if (photonView.IsMine)
+        {
+            ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} Dead and is mine");
+            //ServiceLocator.Instance.GetService<IGameManager>().RemovePlayer(this);
+            //PhotonNetwork.Destroy(gameObject);
+        }
     }
 
     public void StopInput()
     {
-        if(photonView.IsMine)
-            inputCustom.StopInput();
+        inputCustom.StopInput();
     }
 
     public void StartInput()
     {
-        if(photonView.IsMine)
-            inputCustom.StartInput();
+        inputCustom.StartInput();
     }
 
     public float GetLife()

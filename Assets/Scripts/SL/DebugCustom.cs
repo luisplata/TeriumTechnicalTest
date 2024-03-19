@@ -1,3 +1,4 @@
+using System;
 using SL;
 using TMPro;
 using UnityEngine;
@@ -8,8 +9,16 @@ public class DebugCustom : MonoBehaviour, IDebug
     [SerializeField] private TextMeshProUGUI textDebug;
     private void Awake()
     {
-        ServiceLocator.Instance.RegisterService<IDebug>(this);
-        DontDestroyOnLoad(canvas);
+        try
+        {
+            ServiceLocator.Instance.GetService<IDebug>();
+            Destroy(gameObject);
+        }
+        catch (Exception e)
+        {
+            ServiceLocator.Instance.RegisterService<IDebug>(this);
+            DontDestroyOnLoad(gameObject);
+        }
     }
 
     public void Log(string log)

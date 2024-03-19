@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class ServiceSaveData : ISaveData
 {
-    public void SaveNickName(string nickName, PhotonView photonView)
+    public void SaveNickName(string nickName, float life, PhotonView photonView)
     {
-        ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
-        hash.Add("NickName", nickName);
-        hash.Add("Life", 100f);
+        ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable
+        {
+            { "NickName", nickName },
+            { "Life", life },
+            { "Ready", false }
+        };
         photonView.Owner.SetCustomProperties(hash);
         ServiceLocator.Instance.GetService<IDebug>().Log("Nick Name Saved");
     }
@@ -35,12 +38,5 @@ public class ServiceSaveData : ISaveData
     public string GetNickName(bool isDebug)
     {
         return PlayerPrefs.GetString("NickName");
-    }
-
-    public void SaveLife(float life, PhotonView photonView)
-    {
-        var hash = new ExitGames.Client.Photon.Hashtable { { "Life", life } };
-        photonView.Owner.SetCustomProperties(hash);
-        ServiceLocator.Instance.GetService<IDebug>().Log("Life Saved");
     }
 }

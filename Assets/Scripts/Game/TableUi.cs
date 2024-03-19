@@ -38,10 +38,6 @@ public class TableUi : MonoBehaviourPunCallbacks
     private IEnumerator UpdateTableCoroutine()
     {
         yield return new WaitForSeconds(time);
-        if (photonView.IsMine)
-        {
-
-        }
         
         ServiceLocator.Instance.GetService<IDebug>().Log($"Debug: {PhotonNetwork.PlayerList.Length}");
         foreach (var player in PhotonNetwork.PlayerList)

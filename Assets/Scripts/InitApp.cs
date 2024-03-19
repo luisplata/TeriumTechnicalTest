@@ -13,8 +13,15 @@ public class InitApp : MonoBehaviourPunCallbacks, IPhotonRPC
     {
         rulesOfTitleRoom.GetCanvas().SetActive(false);
         PhotonNetwork.ConnectUsingSettings();
-        ServiceLocator.Instance.RegisterService<ISaveData>(new ServiceSaveData());
         ServiceLocator.Instance.RegisterService<IPhotonRPC>(this);
+        try
+        {
+            ServiceLocator.Instance.GetService<ISaveData>();
+        }
+        catch (Exception e)
+        {
+            ServiceLocator.Instance.RegisterService<ISaveData>(new ServiceSaveData());
+        }
     }
 
     public void UpdateTable()

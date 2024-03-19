@@ -1,9 +1,7 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using Photon.Pun;
 using SL;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Playables;
 
@@ -13,11 +11,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IGameManager
     [SerializeField] private GameObject[] spawnPoints;
     [SerializeField] private PlayableDirector playableDirector;
     [SerializeField] private GameLoop gameLoop;
-    private List<Player> players = new();
+    [SerializeField] private GameObject canvasToWinner;
+    [SerializeField] private TextMeshProUGUI textWinner;
+    private Player _player;
 
     private void Awake()
     {
         ServiceLocator.Instance.RegisterService<IGameManager>(this);
+        canvasToWinner.SetActive(false);
     }
 
     private void OnDestroy()
@@ -27,12 +28,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IGameManager
 
     public void AddPlayer(Player player)
     {
-        players.Add(player);
+        _player = player;
     }
 
     public void RemovePlayer(Player player)
     {
-        players.Remove(player);
+        _player = null;
     }
 
     private void Start()
@@ -57,13 +58,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IGameManager
 
     private IEnumerator InstantiataPlayer()
     {
-        yield return new WaitForSeconds(1);
         ServiceLocator.Instance.GetService<IDebug>().Log("GameManager PhotonNetwork.IsMasterClient");
         //get a random spawn point
-        var spawnPoint = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Length)];
+        var spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
         //instantiate the player
         var player = PhotonNetwork.Instantiate(playerPrefab.name, spawnPoint.transform.position, spawnPoint.transform.rotation);
-        player.GetComponent<Player>().OnPlayerTakeDamage += OnPlayerTakeDamage;
+        _player = player.GetComponent<Player>();
+        _player.OnPlayerTakeDamage += OnPlayerTakeDamage;
+        yield return new WaitForSeconds(1);
     }
 
     private void OnPlayerTakeDamage()
@@ -73,17 +75,20 @@ public class GameManager : MonoBehaviourPunCallbacks, IGameManager
 
     public int GetCountOfPlayers()
     {
-        return players.Count;
+        return PhotonNetwork.PlayerList.Length;
     }
 
     public int HowMuchPlayerAlive()
     {
         var count = 0;
-        foreach (var player in players)
+        foreach (var player in PhotonNetwork.PlayerList)
         {
-            if (player.GetLife() > 0)
+            if (player.CustomProperties.ContainsKey("Life"))
             {
-                count++;
+                if (player.CustomProperties["Life"] != null && (float)player.CustomProperties["Life"] > 0)
+                {
+                    count++;
+                }
             }
         }
         return count;
@@ -91,23 +96,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IGameManager
 
     public void StopInput()
     {
-        foreach (var player in players)
-        {
-            player.StopInput();
-        }
+        _player.StopInput();
     }
 
     public void StartInput()
     {
-        foreach (var player in players)
-        {
-            player.StartInput();
-        }
-    }
-
-    public void InstantatePlayer()
-    {
-        
+        _player.StartInput();
     }
 
     public void Cinematic()
@@ -123,6 +117,43 @@ public class GameManager : MonoBehaviourPunCallbacks, IGameManager
     public void SpawnPlayers()
     {
         StartCoroutine(InstantiataPlayer());
+    }
+
+    public bool AllPlayersIsReady()
+    {
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            if (player.CustomProperties.ContainsKey("Ready"))
+            {
+                if (player.CustomProperties["Ready"] != null && (bool)player.CustomProperties["Ready"])
+                {
+                    continue;
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public string GetWinner()
+    {
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            if (player.CustomProperties.ContainsKey("Life"))
+            {
+                if (player.CustomProperties["Life"] != null && (float)player.CustomProperties["Life"] > 0)
+                {
+                    return player.CustomProperties["NickName"].ToString();
+                }
+            }
+        }
+        return "No Winner";
+    }
+
+    public void ShowWinner(string winner)
+    {
+        textWinner.text = winner;
+        canvasToWinner.SetActive(true);
     }
 }
 

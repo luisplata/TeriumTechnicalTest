@@ -21,7 +21,7 @@ public class TableOfPlayer : MonoBehaviourPunCallbacks, IPhotonRPC
 
     public void UpdateTable()
     {
-        photonView.RPC(nameof(table.UpdateTable), RpcTarget.AllBuffered);
+        //photonView.RPC(nameof(table.UpdateTable), RpcTarget.AllBuffered);
         photonView.RPC(nameof(tableUi.UpdateTableUi), RpcTarget.AllBuffered);
     }
 }
