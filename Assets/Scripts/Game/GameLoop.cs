@@ -96,7 +96,11 @@ public class GameLoop : MonoBehaviour
         }).Loop(handle =>
         {
             _gameManager.ShowText($"Wait Players: {_gameManager.GetCountOfPlayers()}/2");
-        }).Add(() =>
+            if(_gameManager.GetCountOfPlayers() >= 2)
+            {
+                handle.Break();
+            }
+        }).Add(1).Add(() =>
         {
             _gameManager.HideText();
         });
