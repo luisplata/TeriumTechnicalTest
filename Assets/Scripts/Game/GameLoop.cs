@@ -14,7 +14,7 @@ public class GameLoop : MonoBehaviour
         {
             //init somethings
             _gameManager.Cinematic();
-            
+            ServiceLocator.Instance.GetService<ISoundAndMusic>().PlayMusicGame();
             //ServiceLocator.Instance.GetService<IDebug>().Log("GameLoop Start begin");
         }).Add(_gameManager.GetTimeFromCinematic()).Add(() =>
         {

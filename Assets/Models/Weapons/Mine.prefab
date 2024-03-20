@@ -48,4 +48,6 @@ MonoBehaviour:
   prefab: {fileID: 8219292659578935252, guid: 8bbce0fb54fcdfd41ab21895bc055566, type: 3}
   damage: 60
   cooldown: 30
+  shootSound: {fileID: 8300000, guid: 221375601be084e4db795c0184db7282, type: 3}
+  grabSound: {fileID: 8300000, guid: dce305c8c2a906f46af6b22877950c59, type: 3}
   timeToBlind: 5

@@ -9,6 +9,7 @@ public abstract class WeaponBase : MonoBehaviourPunCallbacks
     [SerializeField] protected GameObject prefab;
     [SerializeField] protected float damage;
     [SerializeField] protected float cooldown;
+    [SerializeField] protected AudioClip shootSound, grabSound;
     protected GameObject weapon;
     protected bool canShoot = true;
 
@@ -20,6 +21,16 @@ public abstract class WeaponBase : MonoBehaviourPunCallbacks
 
     public string Id => id;
 
+    public AudioClip GetShootSound()
+    {
+        return shootSound;
+    }
+    
+    public AudioClip GetGrabSound()
+    {
+        return grabSound;
+    }
+    
     public float GetDamage()
     {
         return damage;

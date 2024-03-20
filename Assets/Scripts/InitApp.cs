@@ -43,6 +43,7 @@ public class InitApp : MonoBehaviourPunCallbacks, IPhotonRPC
         base.OnConnectedToMaster();
         ServiceLocator.Instance.GetService<IDebug>().Log("Connected to master");
         rulesOfTitleRoom.GetCanvas().SetActive(true);
+        ServiceLocator.Instance.GetService<ISoundAndMusic>().PlayMusicMenu();
     }
 
     private void OnDestroy()

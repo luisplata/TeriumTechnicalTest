@@ -839,6 +839,7 @@ MonoBehaviour:
   blindImage: {fileID: 7194162589574714604}
   canvasToInstaKill: {fileID: 7312454488875325861}
   countDownToDie: {fileID: 5699700570419909662}
+  takeDamageSound: {fileID: 8300000, guid: a3286526978cc914cbd4fc5c506decc9, type: 3}
 --- !u!114 &1085269815571162738
 MonoBehaviour:
   m_ObjectHideFlags: 0

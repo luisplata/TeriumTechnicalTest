@@ -21,6 +21,7 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] private Image blindImage; 
     [SerializeField] private GameObject canvasToInstaKill;
     [SerializeField] private TextMeshProUGUI countDownToDie;
+    [SerializeField] private AudioClip takeDamageSound;
 
     private float life = 100f;
     private string nickName;
@@ -82,6 +83,7 @@ public class Player : MonoBehaviourPunCallbacks
                     ServiceLocator.Instance.GetService<IDebug>().Log($"Player {hit.transform.name} and name of target {targetNick} and me is {nickName}");
                     var target = hit.transform.GetComponent<PhotonView>();
                     target.RPC(nameof(TakeDamage), RpcTarget.All, damage + _weapon.GetDamage(), targetNick, _weapon.Id);
+                    ServiceLocator.Instance.GetService<ISoundAndMusic>().PlaySfx(_weapon.GetShootSound());
                 }
             }
         }
@@ -132,6 +134,7 @@ public class Player : MonoBehaviourPunCallbacks
             });
             weaponBase.GetComponent<WeaponBase>().ApplyDamageEffect(this);
             Destroy(weaponBase.gameObject);
+            ServiceLocator.Instance.GetService<ISoundAndMusic>().PlaySfx(takeDamageSound);
         }
         ServiceLocator.Instance.GetService<IPhotonRPC>().UpdateTable();
     }
@@ -139,10 +142,6 @@ public class Player : MonoBehaviourPunCallbacks
     [PunRPC]
     public void ChangeWeapon(string weaponId)
     {
-        if (photonView.IsMine)
-        {
-            
-        }
         ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} ChangeWeapon {_weapon.Id} to {weaponId}");
         if (_weapon != null)
         {
@@ -152,6 +151,7 @@ public class Player : MonoBehaviourPunCallbacks
         _weapon.transform.SetParent(weaponHolder.transform);
         _weapon.transform.localPosition = Vector3.zero;
         _weapon.transform.localRotation = Quaternion.identity;
+        ServiceLocator.Instance.GetService<ISoundAndMusic>().PlaySfx(_weapon.GetGrabSound());
     }
     
     [PunRPC]

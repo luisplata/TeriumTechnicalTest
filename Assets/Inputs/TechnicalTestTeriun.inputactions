@@ -284,6 +284,17 @@
                     "action": "Score",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a089f1bc-1b7b-4f50-ad28-119abc0f6f67",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Joystick",
+                    "action": "Score",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
