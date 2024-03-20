@@ -39,7 +39,7 @@ public class Player : MonoBehaviourPunCallbacks
             inputCustom.OnFire += OnFire;
             nickName = ServiceLocator.Instance.GetService<ISaveData>().GetNickName();
             ServiceLocator.Instance.GetService<ISaveData>().SaveNickName(nickName, life, photonView);
-            ServiceLocator.Instance.GetService<IDebug>().Log($"Data Saved {nickName} {life} {photonView.IsMine}");
+            //ServiceLocator.Instance.GetService<IDebug>().Log($"Data Saved {nickName} {life} {photonView.IsMine}");
             photonView.Owner.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
             {
                 {"Ready", true},
@@ -65,25 +65,25 @@ public class Player : MonoBehaviourPunCallbacks
         _weapon = ServiceLocator.Instance.GetService<IWeaponsFactory>().Create(photonView.Owner.CustomProperties["Weapon"].ToString());
         _weapon.transform.SetParent(weaponHolder.transform);
         _weapon.transform.localPosition = Vector3.zero;
-        ServiceLocator.Instance.GetService<IDebug>().Log($"Data Read {nickName} {life} {photonView.IsMine}");
+        //ServiceLocator.Instance.GetService<IDebug>().Log($"Data Read {nickName} {life} {photonView.IsMine}");
     }
 
     private void OnFire()
     {
-        ServiceLocator.Instance.GetService<IDebug>().Log($"{nickName} OnFire {photonView.IsMine}");
+        //ServiceLocator.Instance.GetService<IDebug>().Log($"{nickName} OnFire {photonView.IsMine}");
         if (photonView.IsMine && _weapon.CanShoot())
         {
             _weapon.Shoot();
+            ServiceLocator.Instance.GetService<ISoundAndMusic>().PlaySfx(_weapon.GetShootSound());
             if (Physics.Raycast(pointShoot.transform.position, pointShoot.transform.forward, out var hit, 100f))
             {
-                ServiceLocator.Instance.GetService<IDebug>().Log($"Hit {hit.transform.name}");
+                //ServiceLocator.Instance.GetService<IDebug>().Log($"Hit {hit.transform.name}");
                 if (hit.transform.CompareTag("Player"))
                 {
                     var targetNick = hit.transform.GetComponent<Player>().nickName;
-                    ServiceLocator.Instance.GetService<IDebug>().Log($"Player {hit.transform.name} and name of target {targetNick} and me is {nickName}");
+                    //ServiceLocator.Instance.GetService<IDebug>().Log($"Player {hit.transform.name} and name of target {targetNick} and me is {nickName}");
                     var target = hit.transform.GetComponent<PhotonView>();
                     target.RPC(nameof(TakeDamage), RpcTarget.All, damage + _weapon.GetDamage(), targetNick, _weapon.Id);
-                    ServiceLocator.Instance.GetService<ISoundAndMusic>().PlaySfx(_weapon.GetShootSound());
                 }
             }
         }
@@ -115,14 +115,12 @@ public class Player : MonoBehaviourPunCallbacks
     public void TakeDamage(float damage, string nickName, string weaponBaseId)
     {
         var nickl = this.nickName;
-        ServiceLocator.Instance.GetService<IDebug>().Log($"{nickName} take damage {damage} and me is {nickl}");
+        //ServiceLocator.Instance.GetService<IDebug>().Log($"{nickName} take damage {damage} and me is {nickl}");
         if (nickl == nickName)
         {
             var weaponBase = ServiceLocator.Instance.GetService<IWeaponsFactory>().Create(weaponBaseId);
-            ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} = {nickName} take damage {damage} photonView.IsMine {photonView.IsMine}");
             life -= damage;
             OnPlayerTakeDamage?.Invoke();
-            ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} take damage {damage} photonView.IsMine {photonView.IsMine}");
             if (life <= 0)
             {
                 ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} is dead");
@@ -157,10 +155,10 @@ public class Player : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Dead()
     {
-        ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} Dead");
+        //ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} Dead");
         if (photonView.IsMine)
         {
-            ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} Dead and is mine");
+            //ServiceLocator.Instance.GetService<IDebug>().Log($" {this.nickName} Dead and is mine");
             //ServiceLocator.Instance.GetService<IGameManager>().RemovePlayer(this);
             //PhotonNetwork.Destroy(gameObject);
         }

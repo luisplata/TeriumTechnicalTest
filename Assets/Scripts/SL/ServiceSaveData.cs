@@ -13,14 +13,14 @@ public class ServiceSaveData : ISaveData
             { "Ready", false }
         };
         photonView.Owner.SetCustomProperties(hash);
-        ServiceLocator.Instance.GetService<IDebug>().Log("Nick Name Saved");
+        //ServiceLocator.Instance.GetService<IDebug>().Log("Nick Name Saved");
     }
 
 
     public void SaveNickName(string nickName, bool isDebug)
     {
         PlayerPrefs.SetString("NickName", nickName);
-        ServiceLocator.Instance.GetService<IDebug>().Log("Nick Name Saved");
+        //ServiceLocator.Instance.GetService<IDebug>().Log("Nick Name Saved");
         //ServiceLocator.Instance.GetService<IPhotonRPC>().UpdateTable();
     }
 

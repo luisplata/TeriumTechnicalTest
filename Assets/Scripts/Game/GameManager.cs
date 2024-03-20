@@ -38,11 +38,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IGameManager
 
     private void Start()
     {
-        ServiceLocator.Instance.GetService<IDebug>().Log("GameManager Start");
+        //ServiceLocator.Instance.GetService<IDebug>().Log("GameManager Start");
         gameLoop.Config(this);
         if (PhotonNetwork.IsConnected)
         {
-            ServiceLocator.Instance.GetService<IDebug>().Log("GameManager PhotonNetwork.IsConnected");
+            //ServiceLocator.Instance.GetService<IDebug>().Log("GameManager PhotonNetwork.IsConnected");
             if (!PhotonNetwork.IsMasterClient)
             {
                 PhotonNetwork.JoinRandomOrCreateRoom();
@@ -52,13 +52,13 @@ public class GameManager : MonoBehaviourPunCallbacks, IGameManager
     
     public override void OnJoinedRoom()
     {
-        ServiceLocator.Instance.GetService<IDebug>().Log("GameManager OnJoinedRoom");
+        //ServiceLocator.Instance.GetService<IDebug>().Log("GameManager OnJoinedRoom");
         gameLoop.StartGame();
     }
 
     private IEnumerator InstantiataPlayer()
     {
-        ServiceLocator.Instance.GetService<IDebug>().Log("GameManager PhotonNetwork.IsMasterClient");
+        //ServiceLocator.Instance.GetService<IDebug>().Log("GameManager PhotonNetwork.IsMasterClient");
         //get a random spawn point
         var spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
         //instantiate the player
@@ -154,6 +154,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IGameManager
     {
         textWinner.text = winner;
         canvasToWinner.SetActive(true);
+    }
+
+    public void ShowText(string s)
+    {
+        canvasToWinner.SetActive(true);
+        textWinner.text = s;
+    }
+
+    public void HideText()
+    {
+        canvasToWinner.SetActive(false);
     }
 }
 

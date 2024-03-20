@@ -38,8 +38,7 @@ public class MusicAndSfxService : MonoBehaviour, ISoundAndMusic
     
     public void PlaySfx(AudioClip sfx)
     {
-        sfxSource.clip = sfx;
-        sfxSource.Play();
+        sfxSource.PlayOneShot(sfx);
     }
 }
 

@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class GameLoop : MonoBehaviour
 {
     private GameManager _gameManager;
-    private TeaTime _start, _lobby, _game, _condition, _end;
+    private TeaTime _start, _lobby, _game, _condition, _end, _waitPlayers;
 
     public void Config(GameManager gameManager)
     {
@@ -27,6 +27,7 @@ public class GameLoop : MonoBehaviour
             //ServiceLocator.Instance.GetService<IDebug>().Log("GameLoop Lobby begin");
             //lobby somethings
             _gameManager.StopInput();
+            _waitPlayers.Play();
         }).Loop(handle =>
         {
             if(_gameManager.GetCountOfPlayers() >= 2)
@@ -88,6 +89,16 @@ public class GameLoop : MonoBehaviour
         }).Add(5).Add(() =>
         {
             SceneManager.LoadScene(0);
+        });
+        
+        _waitPlayers = this.tt().Pause().Add(() =>
+        {
+        }).Loop(handle =>
+        {
+            _gameManager.ShowText($"Wait Players: {_gameManager.GetCountOfPlayers()}/2");
+        }).Add(() =>
+        {
+            _gameManager.HideText();
         });
     }
 

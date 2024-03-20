@@ -17,11 +17,11 @@ public class Table : MonoBehaviourPunCallbacks
     private IEnumerator UpdateTableCoroutine()
     {
         yield return new WaitForSeconds(time);
-        ServiceLocator.Instance.GetService<IDebug>().Log($"Debug: {PhotonNetwork.IsMasterClient}");
+        //ServiceLocator.Instance.GetService<IDebug>().Log($"Debug: {PhotonNetwork.IsMasterClient}");
         foreach (var player in PhotonNetwork.PlayerList)
         {
-            ServiceLocator.Instance.GetService<IDebug>().Log($"Player: {player.CustomProperties["NickName"]} Life: {player.CustomProperties["Life"]}");
+            //ServiceLocator.Instance.GetService<IDebug>().Log($"Player: {player.CustomProperties["NickName"]} Life: {player.CustomProperties["Life"]}");
         }
-        ServiceLocator.Instance.GetService<IDebug>().Log($"Count: {PhotonNetwork.PlayerList.Length}");
+        //ServiceLocator.Instance.GetService<IDebug>().Log($"Count: {PhotonNetwork.PlayerList.Length}");
     }
 }

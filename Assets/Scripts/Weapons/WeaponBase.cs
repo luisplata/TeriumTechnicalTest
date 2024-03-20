@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Photon.Pun;
+using SL;
 using UnityEngine;
 
 public abstract class WeaponBase : MonoBehaviourPunCallbacks
@@ -11,7 +12,7 @@ public abstract class WeaponBase : MonoBehaviourPunCallbacks
     [SerializeField] protected float cooldown;
     [SerializeField] protected AudioClip shootSound, grabSound;
     protected GameObject weapon;
-    protected bool canShoot = true;
+    [SerializeField] protected bool canShoot = true;
 
     private void Start()
     {
@@ -45,6 +46,7 @@ public abstract class WeaponBase : MonoBehaviourPunCallbacks
     {
         canShoot = false;
         StartCoroutine(ShootCooldown());
+        ServiceLocator.Instance.GetService<IDebug>().Log($"weapon {id} shoot with cooldown {cooldown}");
     }
 
     private IEnumerator ShootCooldown()

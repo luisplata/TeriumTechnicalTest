@@ -33,13 +33,14 @@ public class TableUi : MonoBehaviourPunCallbacks
         {
             tableUi.SetActive(!tableUi.activeSelf);
         }
+        ServiceLocator.Instance.GetService<IDebug>().Log($"Table: {tableUi.activeSelf}");
     }
     
     private IEnumerator UpdateTableCoroutine()
     {
         yield return new WaitForSeconds(time);
         
-        ServiceLocator.Instance.GetService<IDebug>().Log($"Debug: {PhotonNetwork.PlayerList.Length}");
+        //ServiceLocator.Instance.GetService<IDebug>().Log($"Debug: {PhotonNetwork.PlayerList.Length}");
         foreach (var player in PhotonNetwork.PlayerList)
         {
             //player.CustomProperties["Life"]
@@ -58,6 +59,6 @@ public class TableUi : MonoBehaviourPunCallbacks
             playerUiCustoms[playerNick].UpdatePlayerUi(playerNick, playerLife);
         }
 
-        ServiceLocator.Instance.GetService<IDebug>().Log($"Count: {PhotonNetwork.PlayerList.Length}");
+        //ServiceLocator.Instance.GetService<IDebug>().Log($"Count: {PhotonNetwork.PlayerList.Length}");
     }
 }

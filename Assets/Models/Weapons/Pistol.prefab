@@ -49,8 +49,9 @@ MonoBehaviour:
   prefab: {fileID: 8219292659578935252, guid: 3b57c52757b22a546b982487af49a665, type: 3}
   damage: 10
   cooldown: 0.5
-  shootSound: {fileID: 8300000, guid: 221375601be084e4db795c0184db7282, type: 3}
-  grabSound: {fileID: 8300000, guid: c51c58b7f71abc14487bdf75532dd3e5, type: 3}
+  shootSound: {fileID: 8300000, guid: 6414ccb4e9f23b842a7d66aa723e8697, type: 3}
+  grabSound: {fileID: 8300000, guid: 72cc8d1163a9a564198e3a4562572006, type: 3}
+  canShoot: 1
 --- !u!114 &5405818093180288646
 MonoBehaviour:
   m_ObjectHideFlags: 0

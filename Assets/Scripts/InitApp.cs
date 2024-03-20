@@ -41,7 +41,7 @@ public class InitApp : MonoBehaviourPunCallbacks, IPhotonRPC
     public override void OnConnectedToMaster()
     {
         base.OnConnectedToMaster();
-        ServiceLocator.Instance.GetService<IDebug>().Log("Connected to master");
+        //ServiceLocator.Instance.GetService<IDebug>().Log("Connected to master");
         rulesOfTitleRoom.GetCanvas().SetActive(true);
         ServiceLocator.Instance.GetService<ISoundAndMusic>().PlayMusicMenu();
     }

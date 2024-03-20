@@ -12,12 +12,12 @@ public class DebugCustom : MonoBehaviour, IDebug
         try
         {
             ServiceLocator.Instance.GetService<IDebug>();
-            Destroy(gameObject);
+            Destroy(canvas.gameObject);
         }
         catch (Exception e)
         {
             ServiceLocator.Instance.RegisterService<IDebug>(this);
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(canvas.gameObject);
         }
     }
 

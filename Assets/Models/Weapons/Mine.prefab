@@ -49,5 +49,6 @@ MonoBehaviour:
   damage: 60
   cooldown: 30
   shootSound: {fileID: 8300000, guid: 221375601be084e4db795c0184db7282, type: 3}
-  grabSound: {fileID: 8300000, guid: dce305c8c2a906f46af6b22877950c59, type: 3}
+  grabSound: {fileID: 8300000, guid: c4ed70072fa732b4aa73e6cf9f4f7038, type: 3}
+  canShoot: 1
   timeToBlind: 5
